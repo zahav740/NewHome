@@ -1,8 +1,7 @@
 package com.alexey.newhome;
 
-// Импортируйте необходимые пакеты
-
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +13,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
@@ -29,9 +31,6 @@ public class HistoryActivity extends AppCompatActivity {
         historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
-
-        // Загрузка истории транзакций из базы данных за выбранную дату
-        loadTransactionHistory(selectedDate);
 
         // Установка обработчика для кнопки "Назад"
         Button backButton = findViewById(R.id.backButton);
@@ -63,7 +62,17 @@ public class HistoryActivity extends AppCompatActivity {
 
         // Ваш код для загрузки истории транзакций из базы данных
         // в соответствии с выбранной датой (год, месяц, день)
-        Cursor res = myDb.getTransactionHistory(year, month, dayOfMonth);
+        Cursor res;
+        if (year != 0 && month != 0 && dayOfMonth != 0) {
+            res = myDb.getTransactionHistory(year, month, dayOfMonth);
+        } else if (year != 0 && month != 0) {
+            res = myDb.getTransactionHistoryByMonth(year, month);
+        } else if (year != 0) {
+            res = myDb.getTransactionHistoryByYear(year);
+        } else {
+            res = myDb.getAllData();
+        }
+
         if (res.getCount() == 0) {
             return;
         }
@@ -94,19 +103,35 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void showDatePickerDialog() {
+        Calendar currentDate = selectedDate;
+        int year = currentDate.get(Calendar.YEAR);
+        int month = currentDate.get(Calendar.MONTH);
+        int day = currentDate.get(Calendar.DAY_OF_MONTH);
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         selectedDate.set(year, month, dayOfMonth);
+
+                        // Загрузка истории транзакций после выбора даты
                         loadTransactionHistory(selectedDate);
                     }
                 },
-                selectedDate.get(Calendar.YEAR),
-                selectedDate.get(Calendar.MONTH),
-                selectedDate.get(Calendar.DAY_OF_MONTH)
+                year,
+                month,
+                day
         );
+
+        datePickerDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // Загрузка истории транзакций после закрытия календаря
+                loadTransactionHistory(selectedDate);
+            }
+        });
+
         datePickerDialog.show();
     }
 
@@ -116,6 +141,8 @@ public class HistoryActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 }
+
+
 
 
 

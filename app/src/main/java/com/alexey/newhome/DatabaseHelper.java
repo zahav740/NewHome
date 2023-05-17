@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
@@ -45,7 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.rawQuery("select * from "+ TABLE_NAME, null);
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
     }
 
     public Cursor getTransactionHistory(int year, int month, int dayOfMonth) {
@@ -54,4 +54,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String dateString = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, dayOfMonth);
         return db.rawQuery(query, new String[]{dateString});
     }
+
+    public Cursor getTransactionHistoryByMonth(int year, int month) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
+                " WHERE strftime('%Y', DATE) = ? AND strftime('%m', DATE) = ?" +
+                " GROUP BY strftime('%Y-%m', DATE)";
+        String yearString = String.valueOf(year);
+        String monthString = String.format(Locale.getDefault(), "%02d", month);
+        return db.rawQuery(query, new String[]{yearString, monthString});
+    }
+
+    public Cursor getTransactionHistoryByYear(int year) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
+                " WHERE strftime('%Y', DATE) = ?" +
+                " GROUP BY strftime('%Y', DATE)";
+        String yearString = String.valueOf(year);
+        return db.rawQuery(query, new String[]{yearString});
+    }
+
 }
+
+
+
