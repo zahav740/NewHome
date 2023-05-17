@@ -1,5 +1,6 @@
 package com.alexey.newhome;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -39,10 +40,22 @@ public class MainActivity extends AppCompatActivity {
         balanceButton = findViewById(R.id.balanceButton);
         tableLayout = findViewById(R.id.tableLayout);
         balanceTextView = findViewById(R.id.balanceTextView);
+        Button exitButton = findViewById(R.id.exitButton);
 
         balanceButton.setOnClickListener(v -> calculateBalance());
+        balanceButton.setOnClickListener(v -> calculateBalance());
+
+        // Установка обработчика для кнопки "История"
+        Button historyButton = findViewById(R.id.historyButton);
+        historyButton.setOnClickListener(v -> openHistoryActivity());
 
         loadDataFromDatabase();
+        exitButton.setOnClickListener(v -> finish());
+    }
+
+    private void openHistoryActivity() {
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        startActivity(intent);
     }
 
     private void calculateBalance() {
@@ -81,13 +94,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadDataFromDatabase() {
         Cursor res = myDb.getAllData();
-        if(res.getCount() == 0) {
+        if (res.getCount() == 0) {
             return;
         }
 
         while (res.moveToNext()) {
             addRowToTable(res.getString(1), res.getString(2), res.getString(3), res.getString(4));
         }
+
+        // Подсчет текущего баланса
+        balance = calculateCurrentBalance();
+        balanceTextView.setText(String.valueOf(balance));
+        balanceButton.setText("Баланс: " + balance);
+    }
+
+    private float calculateCurrentBalance() {
+        float currentBalance = 0.0f;
+        Cursor res = myDb.getAllData();
+        if (res.getCount() == 0) {
+            return currentBalance;
+        }
+
+        while (res.moveToNext()) {
+            float income = Float.parseFloat(res.getString(2));
+            float expense = Float.parseFloat(res.getString(4));
+            currentBalance += income - expense;
+        }
+
+        return currentBalance;
     }
 
     private void addRowToTable(String date, String income, String expenseName, String expense) {
