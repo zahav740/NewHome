@@ -1,5 +1,6 @@
 package com.alexey.newhome;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,16 +11,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
     private EditText incomeInput;
@@ -31,12 +24,14 @@ public class MainActivity extends AppCompatActivity {
 
     private float balance = 0.0f;
 
-    private static final String FILENAME = "finances.json";
+    DatabaseHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myDb = new DatabaseHelper(this);
 
         incomeInput = findViewById(R.id.incomeInput);
         expenseNameInput = findViewById(R.id.expenseNameInput);
@@ -47,11 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         balanceButton.setOnClickListener(v -> calculateBalance());
 
-        try {
-            loadFromJson();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        loadDataFromDatabase();
     }
 
     private void calculateBalance() {
@@ -76,77 +67,26 @@ public class MainActivity extends AppCompatActivity {
         String expenseName = expenseNameInput.getText().toString();
         String expenseStr = String.valueOf(expense);
 
-        addRowToTable(date, incomeStr, expenseName, expenseStr);
+        boolean isInserted = myDb.insertData(date, income, expenseName, expense);
 
-        balanceTextView.setText(String.valueOf(balance));
-        balanceButton.setText("Баланс: " + balance);
-
-        JSONObject transaction = new JSONObject();
-        try {
-            transaction.put("date", date);
-            transaction.put("income", incomeStr);
-            transaction.put("expenseName", expenseName);
-            transaction.put("expense", expenseStr);
-            saveToJson(transaction);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        incomeInput.setText("");
-        expenseNameInput.setText("");
-        expenseInput.setText("");
-    }
-
-    private void saveToJson(JSONObject transaction) {
-        File file = new File(getFilesDir(), FILENAME);
-        JSONObject mainObject = new JSONObject();
-
-        try {
-            if (file.exists()) {
-                Scanner scanner = new Scanner(file);
-                StringBuilder builder = new StringBuilder();
-                while (scanner.hasNextLine()) {
-                    builder.append(scanner.nextLine());
-                }
-                mainObject = new JSONObject(builder.toString());
-                scanner.close();
-            }
-
-            mainObject.put(transaction.getString("date"), transaction);
-            FileWriter writer = new FileWriter(file);
-            writer.write(mainObject.toString());
-            writer.close();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
+        if(isInserted) {
+            addRowToTable(date, incomeStr, expenseName, expenseStr);
+            balanceTextView.setText(String.valueOf(balance));
+            balanceButton.setText("Баланс: " + balance);
+            incomeInput.setText("");
+            expenseNameInput.setText("");
+            expenseInput.setText("");
         }
     }
 
-    private void loadFromJson() throws JSONException {
-        File file = new File(getFilesDir(), FILENAME);
-        if (file.exists()) {
-            StringBuilder builder = new StringBuilder();
-            try {
-                Scanner scanner = new Scanner(file);
-                while (scanner.hasNextLine()) {
-                    builder.append(scanner.nextLine());
-                }
-                scanner.close();
-                JSONObject mainObject = new JSONObject(builder.toString());
-                Iterator<String> keys = mainObject.keys();
+    private void loadDataFromDatabase() {
+        Cursor res = myDb.getAllData();
+        if(res.getCount() == 0) {
+            return;
+        }
 
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    JSONObject transaction = mainObject.getJSONObject(key);
-                    addRowToTable(
-                            transaction.getString("date"),
-                            transaction.getString("income"),
-                            transaction.getString("expenseName"),
-                            transaction.getString("expense"));
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        while (res.moveToNext()) {
+            addRowToTable(res.getString(1), res.getString(2), res.getString(3), res.getString(4));
         }
     }
 
@@ -165,4 +105,3 @@ public class MainActivity extends AppCompatActivity {
         return textView;
     }
 }
-
