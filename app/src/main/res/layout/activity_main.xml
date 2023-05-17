@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green_tranquility"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/incomeInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mint_moss"
+            android:hint="Доход"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textColor="@color/dark_poison" />
+
+        <EditText
+            android:id="@+id/expenseNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mint_moss"
+            android:hint="Статья"
+            android:minHeight="48dp"
+            android:textColor="@color/dark_poison" />
+
+        <EditText
+            android:id="@+id/expenseInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/mint_moss"
+            android:hint="Расход"
+            android:inputType="numberDecimal"
+            android:minHeight="48dp"
+            android:textColor="@color/dark_poison" />
+
+        <Button
+            android:id="@+id/balanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/turquoise_breeze"
+            android:text="Баланс"
+            android:textColor="@color/dark_poison" />
+
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*"
+            android:background="@color/lettuce_dream">
+
+            <TableRow
+                android:background="@color/currant_leaf">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Дата"
+                    android:textColor="@color/dark_poison" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Доход"
+                    android:textColor="@color/dark_poison" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Статья"
+                    android:textColor="@color/dark_poison" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Расход"
+                    android:textColor="@color/dark_poison" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/balanceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Баланс: "
+            android:textSize="18sp"
+            android:textColor="@color/dark_poison" />
+
+        <Button
+            android:id="@+id/exitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/turquoise_breeze"
+            android:text="Выход"
+            android:textColor="@color/dark_poison" />
+    </LinearLayout>
+</ScrollView>
+
+

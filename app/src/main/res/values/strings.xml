@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Your Application</string>
+    <string name="income">Доход</string>
+    <string name="expense_name">Статья расхода</string>
+    <string name="expense">Расход</string>
+    <string name="balance">Баланс</string>
+</resources>
