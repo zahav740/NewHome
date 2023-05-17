@@ -1,19 +1,26 @@
 package com.alexey.newhome;
 
-import android.content.Intent;
-import android.database.Cursor;
+// Импортируйте необходимые пакеты
+
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
     private DatabaseHelper myDb;
+    private Calendar selectedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +29,10 @@ public class HistoryActivity extends AppCompatActivity {
 
         historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
+        selectedDate = Calendar.getInstance();
 
-        // Загрузка истории транзакций из базы данных
-        loadTransactionHistory();
+        // Загрузка истории транзакций из базы данных за выбранную дату
+        loadTransactionHistory(selectedDate);
 
         // Установка обработчика для кнопки "Назад"
         Button backButton = findViewById(R.id.backButton);
@@ -34,17 +42,25 @@ public class HistoryActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        // Установка обработчика для кнопки "Выбрать дату"
+        Button selectDateButton = findViewById(R.id.selectDateButton);
+        selectDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
     }
 
-    private void loadTransactionHistory() {
-        Cursor res = myDb.getAllData();
-        if (res.getCount() == 0) {
-            return;
-        }
+    private void loadTransactionHistory(Calendar date) {
+        // Очистка таблицы перед загрузкой новых данных
+        historyTable.removeAllViews();
 
-        while (res.moveToNext()) {
-            addRowToTable(res.getString(1), res.getString(2), res.getString(3), res.getString(4));
-        }
+        // Получение истории транзакций из базы данных за выбранную дату
+        // и отображение данных в таблице
+        // Ваш код для загрузки и отображения данных истории транзакций
+        // в соответствии с выбранной датой (год, месяц, день)
     }
 
     private void addRowToTable(String date, String income, String expenseName, String expense) {
@@ -62,11 +78,27 @@ public class HistoryActivity extends AppCompatActivity {
         return textView;
     }
 
+    private void showDatePickerDialog() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        selectedDate.set(year, month, dayOfMonth);
+                        loadTransactionHistory(selectedDate);
+                    }
+                },
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH),
+                selectedDate.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
     @Override
     public void onBackPressed() {
         // Возвращение в MainActivity
-        Intent intent = new Intent(HistoryActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        super.onBackPressed();
     }
 }
+
