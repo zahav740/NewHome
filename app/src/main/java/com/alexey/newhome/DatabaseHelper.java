@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Locale;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "finance.db";
     private static final String TABLE_NAME = "transaction_table";
@@ -44,5 +46,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("select * from "+ TABLE_NAME, null);
+    }
+
+    public Cursor getTransactionHistory(int year, int month, int dayOfMonth) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE DATE = ?";
+        String dateString = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month, dayOfMonth);
+        return db.rawQuery(query, new String[]{dateString});
     }
 }

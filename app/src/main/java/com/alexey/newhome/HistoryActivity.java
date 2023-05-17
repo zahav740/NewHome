@@ -3,6 +3,7 @@ package com.alexey.newhome;
 // Импортируйте необходимые пакеты
 
 import android.app.DatePickerDialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +14,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
@@ -57,10 +56,26 @@ public class HistoryActivity extends AppCompatActivity {
         // Очистка таблицы перед загрузкой новых данных
         historyTable.removeAllViews();
 
-        // Получение истории транзакций из базы данных за выбранную дату
-        // и отображение данных в таблице
-        // Ваш код для загрузки и отображения данных истории транзакций
+        // Получение выбранной даты
+        int year = date.get(Calendar.YEAR);
+        int month = date.get(Calendar.MONTH) + 1;
+        int dayOfMonth = date.get(Calendar.DAY_OF_MONTH);
+
+        // Ваш код для загрузки истории транзакций из базы данных
         // в соответствии с выбранной датой (год, месяц, день)
+        Cursor res = myDb.getTransactionHistory(year, month, dayOfMonth);
+        if (res.getCount() == 0) {
+            return;
+        }
+
+        while (res.moveToNext()) {
+            String transactionDate = res.getString(1);
+            String income = res.getString(2);
+            String expenseName = res.getString(3);
+            String expense = res.getString(4);
+
+            addRowToTable(transactionDate, income, expenseName, expense);
+        }
     }
 
     private void addRowToTable(String date, String income, String expenseName, String expense) {
@@ -101,4 +116,6 @@ public class HistoryActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 }
+
+
 
