@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mint_moss">#6DA36B</color>
+    <color name="emerald_rain">#1E9E68</color>
+    <color name="grassy_sunset">#77A562</color>
+    <color name="lettuce_dream">#B9D89C</color>
+    <color name="glowing_forest">#2F8F42</color>
+    <color name="turquoise_breeze">#2DAE93</color>
+    <color name="currant_leaf">#4E7359</color>
+    <color name="olive_reflection">#6C7B55</color>
+    <color name="dark_poison">#193D28</color>
+    <color name="green_tranquility">#BEDDB7</color>
+
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorAccent">#C8E6C9</color>
+    <color name="colorBackground">#E8F5E9</color>
+    <color name="colorText">#1B5E20</color>
+    <color name="colorTextSecondary">#689F38</color>
+
+    <color name="purple_500">#9C27B0</color>
+    <color name="purple_700">#7B1FA2</color>
+    <color name="white">#FFFFFF</color>
+    <color name="teal_200">#80CBC4</color>
+    <color name="teal_700">#00796B</color>
+    <color name="black">#000000</color>
+    <color name="purple_200">#BA68C8</color>
+</resources>
