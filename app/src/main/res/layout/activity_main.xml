@@ -17,18 +17,18 @@
             android:id="@+id/tableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:background="@color/green">
+            android:background="@color/white"
+            android:stretchColumns="*">
 
-            <TableRow
-                android:background="@color/dark_gray">
+            <TableRow android:background="@color/light_gray">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Дата"
-                    android:textColor="@color/white"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -36,7 +36,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Доход"
-                    android:textColor="@color/white"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -44,7 +45,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Статья"
-                    android:textColor="@color/white"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -52,7 +54,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Расход"
-                    android:textColor="@color/white"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </TableRow>
         </TableLayout>
@@ -63,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Текущий баланс:"
-            android:textSize="18sp"
             android:textColor="@color/dark_gray"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <Button
@@ -73,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/blue"
+            android:background="@color/light_orange"
             android:text="История"
             android:textColor="@color/white"
             android:textStyle="bold" />
@@ -115,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/blue"
+            android:background="@color/light_orange"
             android:text="Баланс"
             android:textColor="@color/white"
             android:textStyle="bold" />
@@ -126,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/blue"
+            android:background="@color/light_orange"
             android:text="Выход"
             android:textColor="@color/white"
             android:textStyle="bold" />
