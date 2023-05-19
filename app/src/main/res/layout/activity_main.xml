@@ -9,19 +9,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TableLayout
             android:id="@+id/tableLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:background="@color/green">
+            android:layout_height="0dp"
+            android:layout_weight="100"
+            android:background="@color/light_gray"
+            android:stretchColumns="*">
 
-            <TableRow
-                android:background="@color/dark_gray">
+            <TableRow android:background="@color/colorPrimaryDark">
 
                 <TextView
                     android:layout_width="0dp"
@@ -29,6 +28,7 @@
                     android:layout_weight="1"
                     android:text="Дата"
                     android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -37,6 +37,7 @@
                     android:layout_weight="1"
                     android:text="Доход"
                     android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -45,6 +46,7 @@
                     android:layout_weight="1"
                     android:text="Статья"
                     android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -53,6 +55,7 @@
                     android:layout_weight="1"
                     android:text="Расход"
                     android:textColor="@color/white"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
             </TableRow>
         </TableLayout>
@@ -63,25 +66,21 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Текущий баланс:"
-            android:textSize="18sp"
             android:textColor="@color/dark_gray"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/historyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/blue"
-            android:text="История"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+        <!-- Добавление пустого View с весом -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <EditText
             android:id="@+id/incomeInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@color/white"
             android:hint="Доход"
             android:inputType="numberDecimal"
@@ -93,6 +92,7 @@
             android:id="@+id/expenseNameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@color/white"
             android:hint="Статья"
             android:minHeight="48dp"
@@ -103,6 +103,7 @@
             android:id="@+id/expenseInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@color/white"
             android:hint="Расход"
             android:inputType="numberDecimal"
@@ -115,9 +116,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="Баланс"
             android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/historyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:text="История"
+            android:textColor="@color/white"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <Button
@@ -126,9 +140,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/blue"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="Выход"
             android:textColor="@color/white"
+            android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

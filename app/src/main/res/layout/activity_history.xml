@@ -2,17 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/light_gray"
+    android:padding="16dp">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <TableLayout
             android:id="@+id/historyTable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*">
+            android:stretchColumns="*"
+            android:background="@color/light_gray">
 
             <!-- Здесь будут добавляться строки таблицы программно -->
 
@@ -20,20 +24,45 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/selectDateButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Выбрать дату" />
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Год"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/buttonMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Месяц"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/buttonDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="День"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:text="Назад" />
+        android:text="Назад"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:textColor="@color/white" />
 
 </LinearLayout>
-
-
