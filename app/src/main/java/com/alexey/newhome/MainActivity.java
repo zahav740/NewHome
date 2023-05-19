@@ -3,6 +3,7 @@ package com.alexey.newhome;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
         loadDataFromDatabase();
         exitButton.setOnClickListener(v -> finish());
+
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        HistoryPagerAdapter pagerAdapter = new HistoryPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private void openHistoryActivity() {
@@ -136,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView createTextView(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);
+        textView.setGravity(Gravity.CENTER); // Установите выравнивание по центру
         return textView;
     }
+
 }
