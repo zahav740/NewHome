@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -36,25 +37,31 @@
             android:id="@+id/buttonYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_gray"
             android:text="Год"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1sp" />
 
         <Button
             android:id="@+id/buttonMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_gray"
             android:text="Месяц"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1sp" />
 
         <Button
             android:id="@+id/buttonDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_gray"
             android:text="День"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1sp" />
 
         <TextView
             android:id="@+id/emptyTextView"
@@ -63,7 +70,7 @@
             android:layout_gravity="center"
             android:text="У тебя нет истории за этот период"
             android:textSize="18sp"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/white"
             android:visibility="gone" />
 
     </LinearLayout>
@@ -74,11 +81,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
+        android:backgroundTint="@color/light_gray"
         android:text="Скачать"
-        android:textSize="16sp"
         android:textColor="@color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:backgroundTint="@color/colorPrimaryDark" />
+        app:strokeColor="@color/white"
+        app:strokeWidth="1sp" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"

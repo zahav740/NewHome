@@ -4,6 +4,8 @@ package com.alexey.newhome.Jv;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.alexey.newhome.R;
+
 
 /**Created by JaKo coding (Nikolay) 14.02.2020
  *

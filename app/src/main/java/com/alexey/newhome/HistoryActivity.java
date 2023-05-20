@@ -20,6 +20,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alexey.newhome.Jv.SwipeDetector;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
@@ -43,14 +45,6 @@ public class HistoryActivity extends AppCompatActivity {
         historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
-
-//        backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
 
         Button buttonYear = findViewById(R.id.buttonYear);
         buttonYear.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +97,8 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
+
+        loadTransactionHistory(selectedDate);
     }
 
     @Override
@@ -121,92 +117,14 @@ public class HistoryActivity extends AppCompatActivity {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX < 0) { // меняем условие на "меньше"
-                        onSwipeLeft();
-                    }
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffX > 0) {
+                    // Right swipe
+                    onBackPressed();
                 }
             }
-            return true;
+            return super.onFling(e1, e2, velocityX, velocityY);
         }
-
-        public void onSwipeLeft() {
-            finish();
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        }
-    }
-
-
-        private void loadTransactionHistory(Calendar date) {
-        historyTable.removeAllViews();
-
-        int year = date.get(Calendar.YEAR);
-        int month = date.get(Calendar.MONTH) + 1;
-        int dayOfMonth = date.get(Calendar.DAY_OF_MONTH);
-
-        Cursor res;
-        if (year != 0 && month != 0 && dayOfMonth != 0) {
-            res = myDb.getTransactionHistory(year, month, dayOfMonth);
-        } else if (year != 0 && month != 0) {
-            res = myDb.getTransactionHistoryByMonth(year, month);
-        } else if (year != 0) {
-            res = myDb.getTransactionHistoryByYear(year);
-        } else {
-            res = myDb.getAllData();
-        }
-
-        if (res.getCount() == 0) {
-            return;
-        }
-
-        while (res.moveToNext()) {
-            String transactionDate = res.getString(1);
-            String income = res.getString(2);
-            String expenseName = res.getString(3);
-            String expense = res.getString(4);
-
-            addRowToTable(transactionDate, income, expenseName, expense);
-        }
-    }
-
-    private void addRowToTable(String date, String income, String expenseName, String expense) {
-        TableRow row = new TableRow(this);
-        row.addView(createStyledTextView(date));
-        row.addView(createStyledTextView(income));
-        row.addView(createStyledTextView(expenseName));
-        row.addView(createStyledTextView(expense));
-        historyTable.addView(row);
-    }
-
-    private TextView createStyledTextView(String text) {
-        TextView textView = new TextView(this);
-        textView.setText(text);
-        textView.setTextSize(18);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
-        textView.setTextColor(getResources().getColor(R.color.dark_gray));
-        return textView;
-    }
-
-    private void showDatePickerDialog() {
-        final Calendar currentDate = selectedDate;
-        int year = currentDate.get(Calendar.YEAR);
-        int month = currentDate.get(Calendar.MONTH);
-        int dayOfMonth = currentDate.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                this,
-                (view, year1, month1, dayOfMonth1) -> {
-                    selectedDate.set(year1, month1, dayOfMonth1);
-                    loadTransactionHistory(selectedDate);
-                },
-                year,
-                month,
-                dayOfMonth
-        );
-
-        datePickerDialog.setTitle("Выберите дату");
-        datePickerDialog.show();
     }
 
     private void showYearPickerDialog() {
@@ -261,30 +179,25 @@ public class HistoryActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-    private void exportTransactionHistory() {
-        Cursor res = myDb.getAllData();
+    private void showDatePickerDialog() {
+        final Calendar currentDate = selectedDate;
+        int year = currentDate.get(Calendar.YEAR);
+        int month = currentDate.get(Calendar.MONTH);
+        int dayOfMonth = currentDate.get(Calendar.DAY_OF_MONTH);
 
-        if (res == null || res.getCount() == 0) {
-            showMessage("Нет данных для экспорта");
-            return;
-        }
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, year1, month1, dayOfMonth1) -> {
+                    selectedDate.set(year1, month1, dayOfMonth1);
+                    loadTransactionHistory(selectedDate);
+                },
+                year,
+                month,
+                dayOfMonth
+        );
 
-        data = new StringBuilder();
-        data.append("Дата,Доход,Статья,Расход\n");
-        while (res.moveToNext()) {
-            String transactionDate = res.getString(1);
-            String income = res.getString(2);
-            String expenseName = res.getString(3);
-            String         expense = res.getString(4);
-            data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
-        }
-
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/csv");
-        intent.putExtra(Intent.EXTRA_TITLE, "transaction_history.csv");
-
-        saveFileLauncher.launch(intent);
+        datePickerDialog.setTitle("Выберите дату");
+        datePickerDialog.show();
     }
 
     private void saveDataToFile(Uri uri) {
@@ -307,4 +220,80 @@ public class HistoryActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void exportTransactionHistory() {
+        Cursor res = myDb.getAllData();
+
+        if (res == null || res.getCount() == 0) {
+            showMessage("Нет данных для экспорта");
+            return;
+        }
+
+        data = new StringBuilder();
+        data.append("Дата,Доход,Статья,Расход\n");
+        while (res.moveToNext()) {
+            String transactionDate = res.getString(1);
+            String income = res.getString(2);
+            String expenseName = res.getString(3);
+            String expense = res.getString(4);
+            data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
+        }
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        intent.putExtra(Intent.EXTRA_TITLE, "transaction_history.csv");
+
+        saveFileLauncher.launch(intent);
+    }
+
+    private void loadTransactionHistory(Calendar date) {
+        historyTable.removeAllViews();
+
+        int year = date.get(Calendar.YEAR);
+        int month = date.get(Calendar.MONTH) + 1;
+        int dayOfMonth = date.get(Calendar.DAY_OF_MONTH);
+
+        Cursor res;
+        if (year != 0 && month != 0 && dayOfMonth != 0) {
+            res = myDb.getTransactionHistory(year, month, dayOfMonth);
+        } else if (year != 0 && month != 0) {
+            res = myDb.getTransactionHistoryByMonth(year, month);
+        } else if (year != 0) {
+            res = myDb.getTransactionHistoryByYear(year);
+        } else {
+            res = myDb.getAllData();
+        }
+
+        if (res.getCount() == 0) {
+            return;
+        }
+
+        while (res.moveToNext()) {
+            String transactionDate = res.getString(0);
+            String income = res.getString(1);
+            String expense = res.getString(2);
+
+            // Add your code here to add the data to the table
+            addRowToTable(transactionDate, income, expense);
+        }
+    }
+
+    private void addRowToTable(String date, String income, String expense) {
+        TableRow row = new TableRow(this);
+        row.addView(createStyledTextView(date));
+        row.addView(createStyledTextView(income));
+        row.addView(createStyledTextView(expense));
+        historyTable.addView(row);
+    }
+
+
+
+    private TextView createStyledTextView(String text) {
+        TextView textView = new TextView(this);
+        textView.setText(text);
+        textView.setTextSize(18);
+        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTextColor(getResources().getColor(R.color.white));
+        return textView;
+    }
 }
