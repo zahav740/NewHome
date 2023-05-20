@@ -123,23 +123,22 @@ public class HistoryActivity extends AppCompatActivity {
             float diffX = e2.getX() - e1.getX();
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX > 0) {
-                        onSwipeRight();
+                    if (diffX < 0) { // меняем условие на "меньше"
+                        onSwipeLeft();
                     }
                 }
             }
-            return false;
+            return true;
+        }
+
+        public void onSwipeLeft() {
+            finish();
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
     }
 
-    private void onSwipeRight() {
-        Intent intent = new Intent(HistoryActivity.this, MainActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
 
-
-    private void loadTransactionHistory(Calendar date) {
+        private void loadTransactionHistory(Calendar date) {
         historyTable.removeAllViews();
 
         int year = date.get(Calendar.YEAR);

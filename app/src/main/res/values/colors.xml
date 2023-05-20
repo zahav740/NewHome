@@ -20,11 +20,11 @@
 
     <!-- Светлая тема -->
     <color name="light_theme_background">#FAFAFA</color>
-    <color name="light_theme_on_background">#000000</color>
+
 
     <!-- Темная тема -->
     <color name="dark_theme_background">#121212</color>
-    <color name="dark_theme_on_background">#FFFFFF</color>
+
 
 
 </resources>
