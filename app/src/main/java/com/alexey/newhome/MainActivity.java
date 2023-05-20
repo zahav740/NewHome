@@ -3,18 +3,17 @@ package com.alexey.newhome;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.View;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
-import com.google.android.material.tabs.TabLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,10 +30,15 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
 
+    private GestureDetector gestureDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (getSupportActionBar() != null) {   // Проверка на null
+            getSupportActionBar().hide();
+        }
 
         myDb = new DatabaseHelper(this);
 
@@ -46,28 +50,27 @@ public class MainActivity extends AppCompatActivity {
         balanceTextView = findViewById(R.id.balanceTextView);
         Button exitButton = findViewById(R.id.exitButton);
 
-        balanceButton.setOnClickListener(v -> calculateBalance());
+        gestureDetector = new GestureDetector(this, new OnSwipeGestureListener());
+
         balanceButton.setOnClickListener(v -> calculateBalance());
 
-        // Установка обработчика для кнопки "История"
-        Button historyButton = findViewById(R.id.historyButton);
-        historyButton.setOnClickListener(v -> openHistoryActivity());
+//        // Установка обработчика для кнопки "История"
+//        Button historyButton = findViewById(R.id.historyButton);
+//        historyButton.setOnClickListener(v -> openHistoryActivity());
 
         loadDataFromDatabase();
-        exitButton.setOnClickListener(v -> finish());
+        exitButton.setOnClickListener(v -> finishAffinity());
+    }
 
-        ViewPager viewPager = findViewById(R.id.viewPager);
-        HistoryPagerAdapter pagerAdapter = new HistoryPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
-        tabLayout.setupWithViewPager(viewPager);
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
     }
 
     private void openHistoryActivity() {
         Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void calculateBalance() {
@@ -152,4 +155,29 @@ public class MainActivity extends AppCompatActivity {
         return textView;
     }
 
+    private class OnSwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float diffY = e2.getY() - e1.getY();
+            float diffX = e2.getX() - e1.getX();
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight();
+                    }
+                }
+            }
+            return true;
+        }
+
+        public void onSwipeRight() {
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        }
+
+    }
 }

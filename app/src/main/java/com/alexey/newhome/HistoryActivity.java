@@ -2,15 +2,15 @@ package com.alexey.newhome;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,9 +28,11 @@ public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
     private DatabaseHelper myDb;
     private Calendar selectedDate;
-    private static final int REQUEST_SAVE_FILE = 1;
-    private StringBuilder data; // Объявление переменной data
+    private StringBuilder data;
     private ActivityResultLauncher<Intent> saveFileLauncher;
+    private Button backButton;
+
+    private GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +40,11 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         getWindow().setStatusBarColor(getResources().getColor(R.color.black));
 
-
         historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
 
-        Button backButton = findViewById(R.id.backButton);
+//        backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,11 +99,45 @@ public class HistoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 exportTransactionHistory();
-                // TODO: Добавьте код для предоставления пользователю возможности скачать файл
             }
         });
 
+        gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (gestureDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float diffY = e2.getY() - e1.getY();
+            float diffX = e2.getX() - e1.getX();
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight();
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    private void onSwipeRight() {
+        Intent intent = new Intent(HistoryActivity.this, MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
 
     private void loadTransactionHistory(Calendar date) {
         historyTable.removeAllViews();
@@ -135,13 +169,6 @@ public class HistoryActivity extends AppCompatActivity {
 
             addRowToTable(transactionDate, income, expenseName, expense);
         }
-        TextView emptyTextView = findViewById(R.id.emptyTextView);
-        if (res.getCount() == 0) {
-            emptyTextView.setVisibility(View.VISIBLE);
-        } else {
-            emptyTextView.setVisibility(View.GONE);
-        }
-
     }
 
     private void addRowToTable(String date, String income, String expenseName, String expense) {
@@ -158,10 +185,9 @@ public class HistoryActivity extends AppCompatActivity {
         textView.setText(text);
         textView.setTextSize(18);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
-        textView.setTextColor(getResources().getColor(R.color.dark_gray)); // Здесь устанавливаем желаемый цвет текста
+        textView.setTextColor(getResources().getColor(R.color.dark_gray));
         return textView;
     }
-
 
     private void showDatePickerDialog() {
         final Calendar currentDate = selectedDate;
@@ -171,12 +197,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        selectedDate.set(year, month, dayOfMonth);
-                        loadTransactionHistory(selectedDate);
-                    }
+                (view, year1, month1, dayOfMonth1) -> {
+                    selectedDate.set(year1, month1, dayOfMonth1);
+                    loadTransactionHistory(selectedDate);
                 },
                 year,
                 month,
@@ -193,12 +216,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        selectedDate.set(year, Calendar.JANUARY, 1);
-                        loadTransactionHistory(selectedDate);
-                    }
+                (view, year1, month, dayOfMonth) -> {
+                    selectedDate.set(year1, Calendar.JANUARY, 1);
+                    loadTransactionHistory(selectedDate);
                 },
                 year,
                 Calendar.JANUARY,
@@ -223,12 +243,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        selectedDate.set(year, month, 1);
-                        loadTransactionHistory(selectedDate);
-                    }
+                (view, year1, month1, dayOfMonth) -> {
+                    selectedDate.set(year1, month1, 1);
+                    loadTransactionHistory(selectedDate);
                 },
                 year,
                 month,
@@ -253,13 +270,13 @@ public class HistoryActivity extends AppCompatActivity {
             return;
         }
 
-        data = new StringBuilder(); // Инициализация переменной data
+        data = new StringBuilder();
         data.append("Дата,Доход,Статья,Расход\n");
         while (res.moveToNext()) {
             String transactionDate = res.getString(1);
             String income = res.getString(2);
             String expenseName = res.getString(3);
-            String expense = res.getString(4);
+            String         expense = res.getString(4);
             data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
         }
 
@@ -286,12 +303,9 @@ public class HistoryActivity extends AppCompatActivity {
             showMessage("Ошибка при сохранении файла");
         }
     }
+
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
 }
-
-
-
-
-

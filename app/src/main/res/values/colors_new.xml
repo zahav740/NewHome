@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Оттенки серого -->
+    <color name="dark_gray">#333333</color>
+    <color name="blue_gray">#6E7B8B</color>
+    <color name="green_gray">#789F8A</color>
+    <color name="purple_gray">#A792BE</color>
+    <color name="light_gray">#CCCCCC</color>
+
+    <!-- Оттенки голубого -->
+    <color name="dark_cyan">#008B8B</color>
+    <color name="gray_cyan">#89A1AC</color>
+    <color name="green_cyan">#7FC8B6</color>
+    <color name="purple_cyan">#8B7DAD</color>
+    <color name="light_cyan">#B0E0E6</color>
+</resources>
