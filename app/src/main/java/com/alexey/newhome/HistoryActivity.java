@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,29 +27,36 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
     private DatabaseHelper myDb;
     private Calendar selectedDate;
     private StringBuilder data;
-    private ActivityResultLauncher<Intent> saveFileLauncher;
-    private Button backButton;
 
     private GestureDetector gestureDetector;
 
     private RecyclerView recyclerView;
     private TransactionAdapter transactionAdapter;
     private List<Transaction> transactionsList;
+    private ActivityResultLauncher<Intent> saveFileLauncher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
+        Button buttonYear = findViewById(R.id.buttonYear);
+        Button buttonMonth = findViewById(R.id.buttonMonth);
+        Button buttonDay = findViewById(R.id.buttonDay);
+
+        buttonYear.setOnClickListener(v -> showYearPickerDialog());
+        buttonMonth.setOnClickListener(v -> showMonthPickerDialog());
+        buttonDay.setOnClickListener(v -> showDatePickerDialog());
+
+        historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
 
         transactionsList = new ArrayList<>();
@@ -81,30 +89,35 @@ public class HistoryActivity extends AppCompatActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-            }
-        });
-
         gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
+
+        saveFileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Uri uri = data.getData();
+                            if (uri != null) {
+                                saveDataToFile(uri);
+                            }
+                        }
+                    }
+                });
     }
 
     private void loadDataFromDatabase() {
-        Cursor cursor = myDb.getAllData();
-        if (cursor.getCount() == 0) {
+        Cursor res = myDb.getAllData();
+        if (res.getCount() == 0) {
             return;
         }
 
-        while (cursor.moveToNext()) {
-            String incomeStr = cursor.getString(2);
-            float income = Float.parseFloat(incomeStr);
-            String expenseStr = cursor.getString(4);
-            float expense = Float.parseFloat(expenseStr);
-            transactionsList.add(new Transaction(cursor.getString(1), income, cursor.getString(3), expense));
+        while (res.moveToNext()) {
+            int transactionId = res.getInt(0);
+            String date = res.getString(1);
+            float income = res.getFloat(2);
+            String expenseName = res.getString(3);
+            float expense = res.getFloat(4);
+            transactionsList.add(new Transaction(transactionId, date, income, expenseName, expense));
         }
     }
 
@@ -126,19 +139,20 @@ public class HistoryActivity extends AppCompatActivity {
             float diffX = e2.getX() - e1.getX();
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffX < 0) { // меняем условие на "меньше"
-                        onSwipeLeft();
+                    if (diffX > 0) { // Изменено условие на "больше"
+                        onSwipeRight(); // Изменено на "onSwipeRight"
                     }
                 }
             }
             return true;
         }
 
-        public void onSwipeLeft() {
+        public void onSwipeRight() { // Изменено на "onSwipeRight"
             finish();
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right); // Изменено на "R.anim.slide_in_left" и "R.anim.slide_out_right"
         }
     }
+
 
     private void loadTransactionHistory(Calendar date) {
         historyTable.removeAllViews();
@@ -191,14 +205,21 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void showDatePickerDialog() {
-        final Calendar currentDate = selectedDate;
-        int year = currentDate.get(Calendar.YEAR);
-        int month = currentDate.get(Calendar.MONTH);
-        int dayOfMonth = currentDate.get(Calendar.DAY_OF_MONTH);
+        final Calendar currentDate = DateHelper.getCalendarInstance();
+        if (selectedDate != null) {
+            currentDate.setTime(selectedDate.getTime());
+        }
+
+        int year = DateHelper.getYear(currentDate);
+        int month = DateHelper.getMonth(currentDate);
+        int dayOfMonth = DateHelper.getDayOfMonth(currentDate);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, year1, month1, dayOfMonth1) -> {
+                    if (selectedDate == null) {
+                        selectedDate = DateHelper.getCalendarInstance();
+                    }
                     selectedDate.set(year1, month1, dayOfMonth1);
                     loadTransactionHistory(selectedDate);
                 },
@@ -237,6 +258,7 @@ public class HistoryActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+
     private void showMonthPickerDialog() {
         final Calendar currentDate = selectedDate;
         int year = currentDate.get(Calendar.YEAR);
@@ -262,6 +284,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         datePickerDialog.show();
     }
+
 
     private void exportTransactionHistory() {
         Cursor res = myDb.getAllData();

@@ -74,7 +74,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{yearString});
     }
 
+    public boolean deleteData(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, COL_1 + "=?", new String[]{String.valueOf(id)}) > 0;
+    }
+
+    public Transaction getTransaction(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COL_1 + "=?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(id)});
+        if (cursor != null) {
+            try {
+                if (cursor.moveToFirst()) {
+                    int idIndex = cursor.getColumnIndex(COL_1);
+                    int dateIndex = cursor.getColumnIndex(COL_2);
+                    int incomeIndex = cursor.getColumnIndex(COL_3);
+                    int expenseNameIndex = cursor.getColumnIndex(COL_4);
+                    int expenseIndex = cursor.getColumnIndex(COL_5);
+                    if (idIndex >= 0 && dateIndex >= 0 && incomeIndex >= 0 && expenseNameIndex >= 0 && expenseIndex >= 0) {
+                        int transactionId = cursor.getInt(idIndex);
+                        String date = cursor.getString(dateIndex);
+                        float income = cursor.getFloat(incomeIndex);
+                        String expenseName = cursor.getString(expenseNameIndex);
+                        float expense = cursor.getFloat(expenseIndex);
+                        return new Transaction(transactionId, date, income, expenseName, expense);
+                    }
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return null;
+    }
 }
-
-
-
