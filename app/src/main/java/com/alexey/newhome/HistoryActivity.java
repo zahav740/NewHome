@@ -233,7 +233,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void showYearPickerDialog() {
-        final Calendar currentDate = selectedDate;
+        final Calendar currentDate = (selectedDate != null) ? selectedDate : Calendar.getInstance();
         int year = currentDate.get(Calendar.YEAR);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -260,7 +260,7 @@ public class HistoryActivity extends AppCompatActivity {
 
 
     private void showMonthPickerDialog() {
-        final Calendar currentDate = selectedDate;
+        final Calendar currentDate = (selectedDate != null) ? selectedDate : Calendar.getInstance();
         int year = currentDate.get(Calendar.YEAR);
         int month = currentDate.get(Calendar.MONTH);
 

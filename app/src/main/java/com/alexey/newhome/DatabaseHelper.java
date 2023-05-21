@@ -55,24 +55,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{dateString});
     }
 
+    //    public Cursor getTransactionHistoryByMonth(int year, int month) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
+//                " WHERE strftime('%Y', DATE) = ? AND strftime('%m', DATE) = ?" +
+//                " GROUP BY strftime('%Y-%m', DATE)";
+//        String yearString = String.valueOf(year);
+//        String monthString = String.format(Locale.getDefault(), "%02d", month);
+//        return db.rawQuery(query, new String[]{yearString, monthString});
+//    }
     public Cursor getTransactionHistoryByMonth(int year, int month) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
                 " WHERE strftime('%Y', DATE) = ? AND strftime('%m', DATE) = ?" +
-                " GROUP BY strftime('%Y-%m', DATE)";
+                " GROUP BY DATE";
         String yearString = String.valueOf(year);
         String monthString = String.format(Locale.getDefault(), "%02d", month);
         return db.rawQuery(query, new String[]{yearString, monthString});
     }
 
+
+//    public Cursor getTransactionHistoryByYear(int year) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
+//                " WHERE strftime('%Y', DATE) = ?" +
+//                " GROUP BY strftime('%Y', DATE)";
+//        String yearString = String.valueOf(year);
+//        return db.rawQuery(query, new String[]{yearString});
+//    }
+
     public Cursor getTransactionHistoryByYear(int year) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT DATE, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
+        String query = "SELECT strftime('%Y-%m', DATE) as Month, SUM(INCOME) AS INCOME, SUM(EXPENSE) AS EXPENSE FROM " + TABLE_NAME +
                 " WHERE strftime('%Y', DATE) = ?" +
-                " GROUP BY strftime('%Y', DATE)";
+                " GROUP BY Month";
         String yearString = String.valueOf(year);
         return db.rawQuery(query, new String[]{yearString});
     }
+
 
     public boolean deleteData(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
