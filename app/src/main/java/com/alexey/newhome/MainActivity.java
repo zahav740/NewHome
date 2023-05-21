@@ -170,4 +170,5 @@ public class MainActivity extends AppCompatActivity {
         textView.setGravity(Gravity.CENTER);
         return textView;
     }
+
 }

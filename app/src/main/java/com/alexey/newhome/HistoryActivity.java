@@ -1,6 +1,5 @@
 package com.alexey.newhome;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,12 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
@@ -34,68 +37,75 @@ public class HistoryActivity extends AppCompatActivity {
 
     private GestureDetector gestureDetector;
 
+    private RecyclerView recyclerView;
+    private TransactionAdapter transactionAdapter;
+    private List<Transaction> transactionsList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
-        getWindow().setStatusBarColor(getResources().getColor(R.color.black));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
-        historyTable = findViewById(R.id.historyTable);
         myDb = new DatabaseHelper(this);
-        selectedDate = Calendar.getInstance();
 
+        transactionsList = new ArrayList<>();
 
-        Button buttonYear = findViewById(R.id.buttonYear);
-        buttonYear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showYearPickerDialog();
-            }
-        });
+        loadDataFromDatabase();
 
-        Button buttonMonth = findViewById(R.id.buttonMonth);
-        buttonMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMonthPickerDialog();
-            }
-        });
+        recyclerView = findViewById(R.id.recyclerView);
+        transactionAdapter = new TransactionAdapter(transactionsList);
+        recyclerView.setAdapter(transactionAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Button buttonDay = findViewById(R.id.buttonDay);
-        buttonDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
-        saveFileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if (result.getResultCode() == Activity.RESULT_OK) {
-                Intent data = result.getData();
-                if (data != null) {
-                    Uri uri = data.getData();
-                    if (uri != null) {
-                        saveDataToFile(uri);
-                    } else {
-                        showMessage("Не удалось получить URI файла");
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                        return false;
                     }
-                } else {
-                    showMessage("Не удалось получить данные о сохраненном файле");
-                }
-            } else {
-                showMessage("Файл не был сохранен");
-            }
-        });
 
-        Button downloadButton = findViewById(R.id.downloadButton);
-        downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                        // Remove item from your data set here
+                        transactionsList.remove(viewHolder.getAdapterPosition());
+
+                        // Notify the adapter that an item is removed
+                        transactionAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                    }
+                };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exportTransactionHistory();
+                finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
         gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
+    }
+
+    private void loadDataFromDatabase() {
+        Cursor cursor = myDb.getAllData();
+        if (cursor.getCount() == 0) {
+            return;
+        }
+
+        while (cursor.moveToNext()) {
+            String incomeStr = cursor.getString(2);
+            float income = Float.parseFloat(incomeStr);
+            String expenseStr = cursor.getString(4);
+            float expense = Float.parseFloat(expenseStr);
+            transactionsList.add(new Transaction(cursor.getString(1), income, cursor.getString(3), expense));
+        }
     }
 
     @Override
@@ -130,8 +140,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-
-        private void loadTransactionHistory(Calendar date) {
+    private void loadTransactionHistory(Calendar date) {
         historyTable.removeAllViews();
 
         int year = date.get(Calendar.YEAR);
@@ -268,7 +277,7 @@ public class HistoryActivity extends AppCompatActivity {
             String transactionDate = res.getString(1);
             String income = res.getString(2);
             String expenseName = res.getString(3);
-            String         expense = res.getString(4);
+            String expense = res.getString(4);
             data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
         }
 
@@ -299,5 +308,4 @@ public class HistoryActivity extends AppCompatActivity {
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 }
