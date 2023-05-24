@@ -59,9 +59,14 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/light_gray"
             android:text="День"
+<<<<<<< Updated upstream
             android:textColor="@color/white"
             app:strokeColor="@color/white"
             app:strokeWidth="1sp" />
+=======
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white" />
+>>>>>>> Stashed changes
 
         <TextView
             android:id="@+id/emptyTextView"
@@ -70,13 +75,36 @@
             android:layout_gravity="center"
             android:text="У тебя нет истории за этот период"
             android:textSize="18sp"
+<<<<<<< Updated upstream
             android:textColor="@color/white"
             android:visibility="gone" />
 
+=======
+            android:textColor="@color/dark_gray"
+            android:visibility="gone" />
+
+
+>>>>>>> Stashed changes
     </LinearLayout>
 
     <Button
         android:id="@+id/downloadButton"
+<<<<<<< Updated upstream
+=======
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="Скачать"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:backgroundTint="@color/colorPrimaryDark" />
+
+
+    <Button
+        android:id="@+id/backButton"
+>>>>>>> Stashed changes
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

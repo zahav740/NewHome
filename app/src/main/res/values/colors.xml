@@ -2,16 +2,22 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
 
     <color name="white">#34421E</color>
     <color name="black">#000000</color>
 
     <color name="light_gray">#F1F1EF</color>
 
+<<<<<<< Updated upstream
     <color name="olivka">#34421E</color>
     <color name="temno_beliy">#F1F1EF</color>
     <color name="olivko_oranjeviy">#C19434</color>
 </resources>
+=======
+    <color name="colorAccent">#6b003e</color>
+>>>>>>> Stashed changes
 
+
+</resources>
 

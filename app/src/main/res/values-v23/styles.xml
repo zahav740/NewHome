@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<<<<<<< Updated upstream
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+=======
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+>>>>>>> Stashed changes
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -8,4 +12,7 @@
         <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes

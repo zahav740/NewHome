@@ -2,6 +2,10 @@ package com.alexey.newhome;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+<<<<<<< Updated upstream
+=======
+import android.content.DialogInterface;
+>>>>>>> Stashed changes
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
@@ -20,6 +24,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+<<<<<<< Updated upstream
+=======
+import java.io.File;
+import java.io.FileWriter;
+>>>>>>> Stashed changes
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
@@ -29,11 +38,17 @@ public class HistoryActivity extends AppCompatActivity {
     private TableLayout historyTable;
     private DatabaseHelper myDb;
     private Calendar selectedDate;
+<<<<<<< Updated upstream
     private StringBuilder data;
     private ActivityResultLauncher<Intent> saveFileLauncher;
     private Button backButton;
 
     private GestureDetector gestureDetector;
+=======
+    private static final int REQUEST_SAVE_FILE = 1;
+    private StringBuilder data;
+    private ActivityResultLauncher<Intent> saveFileLauncher;
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +88,7 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         Button downloadButton = findViewById(R.id.downloadButton);
+<<<<<<< Updated upstream
         downloadButton.setOnClickListener(v -> exportTransactionHistory());
 
         gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
@@ -109,6 +125,34 @@ public class HistoryActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_left);
         }
+=======
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exportTransactionHistory();
+                // TODO: Добавьте код для предоставления пользователю возможности скачать файл
+            }
+        });
+
+        saveFileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                Intent data = result.getData();
+                if (data != null) {
+                    Uri uri = data.getData();
+                    if (uri != null) {
+                        saveDataToFile(uri);
+                    } else {
+                        showMessage("Не удалось получить URI файла");
+                    }
+                } else {
+                    showMessage("Не удалось получить данные о сохраненном файле");
+                }
+            } else {
+                showMessage("Файл не был сохранен");
+            }
+        });
+
+>>>>>>> Stashed changes
     }
 
     private void loadTransactionHistory(Calendar date) {
@@ -141,6 +185,14 @@ public class HistoryActivity extends AppCompatActivity {
 
             addRowToTable(transactionDate, income, expenseName, expense);
         }
+
+        TextView emptyTextView = findViewById(R.id.emptyTextView);
+        if (res.getCount() == 0) {
+            emptyTextView.setVisibility(View.VISIBLE);
+        } else {
+            emptyTextView.setVisibility(View.GONE);
+        }
+
     }
 
     private void addRowToTable(String date, String income, String expenseName, String expense) {
@@ -233,6 +285,71 @@ public class HistoryActivity extends AppCompatActivity {
 
         datePickerDialog.show();
     }
+<<<<<<< Updated upstream
+=======
+
+    private void exportTransactionHistory() {
+        Cursor res = myDb.getAllData();
+
+        if (res == null || res.getCount() == 0) {
+            showMessage("Нет данных для экспорта");
+            return;
+        }
+
+        data = new StringBuilder(); // Инициализация переменной data
+        data.append("Дата,Доход,Статья,Расход\n");
+        while (res.moveToNext()) {
+            String transactionDate = res.getString(1);
+            String income = res.getString(2);
+            String expenseName = res.getString(3);
+            String expense = res.getString(4);
+            data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
+        }
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        intent.putExtra(Intent.EXTRA_TITLE, "transaction_history.csv");
+
+        saveFileLauncher.launch(intent);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_SAVE_FILE && resultCode == RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                saveDataToFile(uri);
+            } else {
+                showMessage("Не удалось получить место сохранения файла");
+            }
+        }
+    }
+    private void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveDataToFile(Uri uri) {
+        try {
+            OutputStream outputStream = getContentResolver().openOutputStream(uri);
+            if (outputStream != null) {
+                outputStream.write(data.toString().getBytes());
+                outputStream.close();
+                showMessage("Файл успешно сохранен");
+            } else {
+                showMessage("Не удалось открыть поток для сохранения файла");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showMessage("Ошибка при сохранении файла");
+        }
+    }
+
+}
+>>>>>>> Stashed changes
 
     private void exportTransactionHistory() {
         Cursor res = myDb.getAllData();
