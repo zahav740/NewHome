@@ -1,16 +1,22 @@
+
 package com.alexey.newhome;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+
+import com.alexey.newhome.Jv.SwipeDetector;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,10 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
 
+    private SwipeDetector swipeDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         myDb = new DatabaseHelper(this);
 
@@ -42,20 +53,41 @@ public class MainActivity extends AppCompatActivity {
         balanceTextView = findViewById(R.id.balanceTextView);
         Button exitButton = findViewById(R.id.exitButton);
 
-        balanceButton.setOnClickListener(v -> calculateBalance());
-        balanceButton.setOnClickListener(v -> calculateBalance());
+        swipeDetector = new SwipeDetector(20) {
+            @Override
+            public void onSwipeDetected(Direction direction) {
+                switch (direction) {
+                    case LEFT:
+                        // Add your code for left swipe
+                        break;
+                    case RIGHT:
+                        openHistoryActivity();
+                        break;
+                    case UP:
+                        // Add your code for up swipe
+                        break;
+                    case DOWN:
+                        // Add your code for down swipe
+                        break;
+                }
+            }
+        };
 
-        // Установка обработчика для кнопки "История"
-        Button historyButton = findViewById(R.id.historyButton);
-        historyButton.setOnClickListener(v -> openHistoryActivity());
+        balanceButton.setOnClickListener(v -> calculateBalance());
 
         loadDataFromDatabase();
-        exitButton.setOnClickListener(v -> finish());
+        exitButton.setOnClickListener(v -> finishAffinity());
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return swipeDetector.onTouchEvent(event) || super.onTouchEvent(event);
     }
 
     private void openHistoryActivity() {
         Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void calculateBalance() {
@@ -102,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
             addRowToTable(res.getString(1), res.getString(2), res.getString(3), res.getString(4));
         }
 
-        // Подсчет текущего баланса
         balance = calculateCurrentBalance();
         balanceTextView.setText(String.valueOf(balance));
         balanceButton.setText("Баланс: " + balance);
@@ -136,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView createTextView(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);
+        textView.setGravity(Gravity.CENTER);
         return textView;
     }
+
 }

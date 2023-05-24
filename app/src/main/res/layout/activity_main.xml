@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/light_gray"
     tools:context=".MainActivity">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="17dp">
+        android:orientation="vertical">
 
         <TableLayout
             android:id="@+id/tableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/light_gray"
             android:stretchColumns="*">
 
             <TableRow android:background="@color/light_gray">
@@ -27,7 +28,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Дата"
-                    android:textColor="@color/dark_gray"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -36,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Доход"
-                    android:textColor="@color/dark_gray"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -45,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Статья"
-                    android:textColor="@color/dark_gray"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -54,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Расход"
-                    android:textColor="@color/dark_gray"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </TableRow>
@@ -66,51 +67,51 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Текущий баланс:"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/historyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@color/light_orange"
-            android:text="История"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <EditText
             android:id="@+id/incomeInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="10dp"
+            android:background="@color/light_gray"
             android:hint="Доход"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/expenseNameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="10dp"
+            android:background="@color/light_gray"
             android:hint="Статья"
             android:minHeight="48dp"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/expenseInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_marginStart="10sp"
+            android:layout_marginTop="10dp"
+            android:background="@color/light_gray"
             android:hint="Расход"
             android:inputType="numberDecimal"
             android:minHeight="48dp"
-            android:textColor="@color/dark_gray"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <Button
@@ -118,10 +119,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@color/light_orange"
+            android:backgroundTint="@color/light_gray"
             android:text="Баланс"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1sp" />
 
         <Button
             android:id="@+id/exitButton"
@@ -129,9 +133,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:background="@color/light_orange"
+            android:backgroundTint="@color/light_gray"
             android:text="Выход"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1sp" />
+
     </LinearLayout>
-</ScrollView>
+</LinearLayout>
+
