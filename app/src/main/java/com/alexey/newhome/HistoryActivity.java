@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.Calendar;
 
 public class HistoryActivity extends AppCompatActivity {
+
     private TableLayout historyTable;
     private DatabaseHelper myDb;
     private Calendar selectedDate;
@@ -44,30 +45,14 @@ public class HistoryActivity extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         selectedDate = Calendar.getInstance();
 
-
         Button buttonYear = findViewById(R.id.buttonYear);
-        buttonYear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showYearPickerDialog();
-            }
-        });
+        buttonYear.setOnClickListener(v -> showYearPickerDialog());
 
         Button buttonMonth = findViewById(R.id.buttonMonth);
-        buttonMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMonthPickerDialog();
-            }
-        });
+        buttonMonth.setOnClickListener(v -> showMonthPickerDialog());
 
         Button buttonDay = findViewById(R.id.buttonDay);
-        buttonDay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
-        });
+        buttonDay.setOnClickListener(v -> showDatePickerDialog());
 
         saveFileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == Activity.RESULT_OK) {
@@ -88,12 +73,7 @@ public class HistoryActivity extends AppCompatActivity {
         });
 
         Button downloadButton = findViewById(R.id.downloadButton);
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                exportTransactionHistory();
-            }
-        });
+        downloadButton.setOnClickListener(v -> exportTransactionHistory());
 
         gestureDetector = new GestureDetector(this, new SwipeGestureDetector());
     }
@@ -117,21 +97,21 @@ public class HistoryActivity extends AppCompatActivity {
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                     if (diffX < 0) { // меняем условие на "меньше"
-                        onSwipeLeft();
+                        onSwipeRight();
                     }
                 }
             }
             return true;
         }
 
-        public void onSwipeLeft() {
-            finish();
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        public void onSwipeRight() {
+            Intent intent = new Intent(HistoryActivity.this, DatabaseViewerActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_left);
         }
     }
 
-
-        private void loadTransactionHistory(Calendar date) {
+    private void loadTransactionHistory(Calendar date) {
         historyTable.removeAllViews();
 
         int year = date.get(Calendar.YEAR);
@@ -268,7 +248,7 @@ public class HistoryActivity extends AppCompatActivity {
             String transactionDate = res.getString(1);
             String income = res.getString(2);
             String expenseName = res.getString(3);
-            String         expense = res.getString(4);
+            String expense = res.getString(4);
             data.append(transactionDate).append(",").append(income).append(",").append(expenseName).append(",").append(expense).append("\n");
         }
 
@@ -299,5 +279,4 @@ public class HistoryActivity extends AppCompatActivity {
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 }
