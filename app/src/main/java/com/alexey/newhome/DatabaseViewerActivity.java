@@ -12,6 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.alexey.newhome.Jv.SwipeDetector;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +26,7 @@ import java.util.List;
 public class DatabaseViewerActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MyAdapter adapter;
-    private SwipeDetector swipeDetector;
+    public SwipeDetector swipeDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +86,26 @@ public class DatabaseViewerActivity extends AppCompatActivity {
             }
         };
     }
+
+    SwipeDetector swipeDetector1 = new SwipeDetector(20) {
+        @Override
+        public void onSwipeDetected(Direction direction) {
+            switch (direction) {
+                case LEFT:
+                    Intent intentLeft = new Intent(DatabaseViewerActivity.this, HistoryActivity.class);
+                    startActivity(intentLeft);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    break;
+                case RIGHT:
+                    Intent intentRight = new Intent(DatabaseViewerActivity.this, MainActivity.class);
+                    startActivity(intentRight);
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    break;
+            }
+        }
+    };
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

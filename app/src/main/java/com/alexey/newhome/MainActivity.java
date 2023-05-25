@@ -139,6 +139,28 @@ public class MainActivity extends AppCompatActivity {
         balanceButton.setText("Баланс: " + balance);
     }
 
+    private void addRowToTable(String date, String income, String expenseName, String expense) {
+        TableRow row = new TableRow(this);
+
+        TextView textView1 = new TextView(this);
+        textView1.setText(date);
+        row.addView(textView1);
+
+        TextView textView2 = new TextView(this);
+        textView2.setText(income);
+        row.addView(textView2);
+
+        TextView textView3 = new TextView(this);
+        textView3.setText(expenseName);
+        row.addView(textView3);
+
+        TextView textView4 = new TextView(this);
+        textView4.setText(expense);
+        row.addView(textView4);
+
+        tableLayout.addView(row);
+    }
+
     private float calculateCurrentBalance() {
         float currentBalance = 0.0f;
         Cursor res = myDb.getAllData();
@@ -155,20 +177,10 @@ public class MainActivity extends AppCompatActivity {
         return currentBalance;
     }
 
-    private void addRowToTable(String date, String income, String expenseName, String expense) {
-        TableRow row = new TableRow(this);
-        row.addView(createTextView(date));
-        row.addView(createTextView(income));
-        row.addView(createTextView(expenseName));
-        row.addView(createTextView(expense));
-        tableLayout.addView(row);
-    }
-
     private TextView createTextView(String text) {
         TextView textView = new TextView(this);
         textView.setText(text);
         textView.setGravity(Gravity.CENTER);
         return textView;
     }
-
 }
